@@ -11,6 +11,12 @@
 #include <student.h>
 #include <tutor.h>
 
+int min(int val_a, int val_b) {
+    if (val_a < val_b) {
+        return val_a; 
+    }
+    return val_b; 
+}
 
 group ** create_groups(int n_groups) {
     group ** groups = malloc(sizeof(group*)*n_groups);
@@ -202,11 +208,10 @@ void * destroy_teacher(teacher * teach) {
 int main()
 {
     int number_of_students = 5; 
-    int number_of_groups = 2; 
-    int number_of_tutors = 2; 
-    int time = 5; 
+    int number_of_groups = 5; 
+    int number_of_tutors = 1; 
+    int time = 1; 
     
-    /*
     printf("Enter the total number of students (int): ");
     scanf("%d", &number_of_students);
     printf("\n\n"); 
@@ -216,8 +221,10 @@ int main()
     printf("Enter the total number of tutors (int): ");
     scanf("%d", &number_of_tutors);
     printf("\n\n");
-    */  
-    
+    printf("Enter a unit of time (int): ");
+    scanf("%d", &time);
+
+    number_of_groups = min(number_of_groups,number_of_students);
     teacher * teach = create_teacher(number_of_students, number_of_groups, number_of_tutors);
     student ** students = create_students(number_of_students, teach);
     tutor ** tutors = create_tutors(number_of_tutors, teach, time);

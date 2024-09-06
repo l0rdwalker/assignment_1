@@ -57,7 +57,7 @@ void * call_for_group(tutor * tut) {
             pthread_cond_wait(tut->group_assigned, tut->lock);
         }
 
-        if (tut->teach->shutdown_flag) {
+        if (tut->teach->shutdown_flag && tut->allocated_group->group_id == -1) {
             tut->allocated_group = NULL; 
             pthread_mutex_unlock(tut->lock);
             break; 
@@ -69,6 +69,7 @@ void * call_for_group(tutor * tut) {
     }
     
     printf("Tutor %i: Thanks Teacher. Bye!\n", tut->tutor_id);
+    pthread_cond_signal(tut->teach->set_vacent_room);
 }
 
 void * tutor_procedure(void * params) {

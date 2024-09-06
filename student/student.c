@@ -9,10 +9,6 @@
 #include <pthread.h>
 #include <main.h>
 
-/*
-Every student/tutor thread will attempt to make themselves known to the teacher thread. Each student will lock the teacher mutex, 
-increment active_students/active_tutors and send a pthread_cond_signal to a dedicated conditional variable teacher->regoister_entry. 
-*/
 void * register_student(student * self_student, teacher * teach) {
     pthread_mutex_lock(teach->lock);
 

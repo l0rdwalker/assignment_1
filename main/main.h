@@ -79,3 +79,5 @@ extern void * destroy_tutor(tutor *);
 extern group * pop_group(teacher *, group ***);
 extern void * destroy_groups(group **, int);
 extern group ** create_groups(int);
+
+extern int min(int, int);

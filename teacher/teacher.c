@@ -42,11 +42,9 @@ group ** assign_groups(student ** students, int n_students, int n_groups) {
 
 void * run_groups(teacher * teach, group ** groups, tutor ** tutors) {
     pthread_mutex_lock(teach->lock);
-    while (teach->num_groups > 0) {
-        group * subject_group = pop_group(teach, &groups);
-        if (subject_group == NULL) {
-            break; 
-        }
+    int cur_group_idx = 0; 
+    for (int idx = 0; idx < teach->num_groups; idx++) {
+        group * subject_group = groups[idx];
         
         while (teach->vacent_room == NULL) {
             pthread_cond_broadcast(teach->public_claim_vacency);
@@ -64,12 +62,15 @@ void * run_groups(teacher * teach, group ** groups, tutor ** tutors) {
         printf("Teacher: The lab %i is now available. Students in group %i can enter the room and start your lab exercise.\n",subject_tutor->tutor_id, subject_group->group_id);
     }
 
-    group dummy;
+    group dummy = {.group_id=-1};
     teach->shutdown_flag = 1; 
     while (teach->num_tutors > 0) {
         while (teach->vacent_room == NULL) {
             pthread_cond_broadcast(teach->public_claim_vacency);
             pthread_cond_wait(teach->set_vacent_room, teach->lock);
+        }
+        if (teach->num_tutors == 0) {
+            break;
         }
 
         tutor * subject_tutor = teach->vacent_room; 
@@ -86,10 +87,6 @@ void * run_groups(teacher * teach, group ** groups, tutor ** tutors) {
     }
 }
 
-/*
-The teacher will wait for all relevent child threads to make themselves known. This is atchieved by both student and tutor threads
-incrementing a shared teacher-stored attribute. Sychronised access to this data is guarded by a teachers specific mutex accessible by both tutors and studetns. 
-*/
 void * await_threads(teacher * teach) {
     printf("Teacher: I'm waiting for all students to arrive.\n");
     pthread_mutex_lock(teach->lock);
